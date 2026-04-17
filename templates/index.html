@@ -1,0 +1,89 @@
+<!-- templates/index.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Indian Legal Assistant</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="header-main">
+                <h1>Indian Legal Assistant</h1>
+                <p>Get information about Indian laws and legal procedures</p>
+            </div>
+            <div class="header-actions">
+                <select id="language-select" class="select-input">
+                    <option value="English">English</option>
+                    <option value="Hindi">हिन्दी (Hindi)</option>
+                    <option value="Marathi">मराठी (Marathi)</option>
+                    <option value="Tamil">தமிழ் (Tamil)</option>
+                </select>
+                <button id="print-btn" class="btn btn-sm" title="Print Conversation">🖨️ Print</button>
+            </div>
+        </header>
+
+        <div class="main-content">
+            <div class="sidebar">
+                <div class="categories-section">
+                    <h3>Legal Categories</h3>
+                    <ul id="categories-list">
+                        <!-- Categories will be loaded dynamically -->
+                    </ul>
+                </div>
+
+                <div class="templates-section">
+                    <h3>Drafting Templates</h3>
+                    <ul id="templates-list">
+                        <!-- Templates will be loaded dynamically -->
+                    </ul>
+                </div>
+                
+                <div class="history-section">
+                    <h3>History</h3>
+                    <ul id="history-list">
+                        <!-- History will be loaded dynamically -->
+                    </ul>
+                </div>
+
+                <div class="actions">
+                    <button id="reset-btn" class="btn">New Conversation</button>
+                </div>
+            </div>
+
+            <div class="chat-container">
+                <div class="chat-messages" id="chat-messages">
+                    <div class="message assistant">
+                        <div class="message-content">
+                            <p>Namaste! I'm your Indian Legal Assistant. How can I help you with Indian law today?</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="input-area">
+                    <div id="file-preview" class="file-preview-area" style="display: none;"></div>
+                    <div class="input-row">
+                        <textarea id="user-input" placeholder="Ask about Indian laws, legal procedures, or rights..."></textarea>
+                        <div class="input-buttons">
+                            <input type="file" id="file-upload" style="display: none;" accept=".pdf,image/*">
+                            <button id="upload-btn" class="icon-btn" title="Upload Document">📎</button>
+                            <button id="voice-btn" class="icon-btn" title="Voice Input">🎤</button>
+                            <button id="send-btn" class="btn">Send</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <footer>
+            <p>Disclaimer: This is an AI assistant for informational purposes only. Not a substitute for professional legal advice.</p>
+        </footer>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+</body>
+</html>
