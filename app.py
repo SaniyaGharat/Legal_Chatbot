@@ -20,8 +20,8 @@ GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
 if GEMINI_API_KEY:
     genai.configure(api_key=GEMINI_API_KEY)
     # Using multiple available models for fallbacks
-    model_flash = genai.GenerativeModel('gemini-1.5-flash')
-    model_pro = genai.GenerativeModel('gemini-1.5-pro')
+    model_flash = genai.GenerativeModel('gemini-2.0-flash')
+    model_pro = genai.GenerativeModel('gemini-flash-latest')
 else:
     model_flash = None
     model_pro = None
@@ -48,6 +48,8 @@ LEGAL_KNOWLEDGE_BASE = {
     "labor law": "Labor Law in India protects workers' rights and regulates employment relationships. Key laws include the Industrial Disputes Act, 1947, the Minimum Wages Act, 1948, and the Factories Act, 1948. These laws cover working conditions, safety, and social security.",
     "tax law": "Tax Law in India is governed by the Income Tax Act, 1961 and the Goods and Services Tax Act, 2017. Income tax applies to individuals and corporations on their income, while GST is a consumption tax on goods and services.",
     "consumer protection": "Consumer Protection Law in India is regulated by the Consumer Protection Act, 2019. It protects consumer rights including the right to safety, information, choice, and redressal. Consumer disputes are resolved through consumer courts and commissions.",
+    "lease": "A lease of immovable property is a transfer of a right to enjoy such property, made for a certain time, express or implied, or in perpetuity, in consideration of a price paid or promised (Section 105, Transfer of Property Act, 1882).",
+    "license": "A license is a right granted by one person to another to do or continue to do, in or upon the immovable property of the grantor, something which would, in the absence of such right, be unlawful (Section 52, Indian Easements Act, 1882).",
 }
 
 # Specific Q&A for common legal questions
@@ -65,7 +67,8 @@ LEGAL_QA = [
     (("maintenance", "alimony"), "Maintenance (alimony) in India is a right to financial support for a spouse. Under laws like the Hindu Marriage Act, 1955 and Section 125 of CrPC, a spouse can claim maintenance if they are unable to support themselves. The amount is determined based on income, living standards, and duration of marriage."),
     (("alimony",), "Alimony in India refers to financial support provided by one spouse to another after separation or divorce. It is based on the earning capacity of both individuals and the needs of the claimant."),
     (("child", "support"), "Child support in India is a legal obligation for both parents to provide for their children's financial needs, including education and healthcare, regardless of their marital status."),
-    (("fir", "refused", "police", "register", "complaint"), "If the police refuse to register an FIR (First Information Report) for a cognizable offense like theft, you have legal remedies. Under the Code of Criminal Procedure (CrPC) and the new Bharatiya Nagarik Suraksha Sanhita (BNSS), you can take the following steps:\n\n1. **Approach Higher Authorities**: Send the substance of your information/complaint in writing and by post to the Superintendent of Police (SP) or Deputy Commissioner of Police (DCP).\n2. **Magistrate Complaint**: If the SP/DCP does not act, you can approach the local Judicial Magistrate under Section 156(3) of CrPC (or equivalent BNSS section) to pass an order directing the police to register the FIR and investigate.\n3. **Online Portals**: Use state-specific online police grievance portals like CCTNS.\n4. **High Court**: As a last resort, file a writ petition in the High Court.\nAlways keep proof of your written complaints and postal receipts.")
+    (("fir", "refused", "police", "register", "complaint"), "If the police refuse to register an FIR (First Information Report) for a cognizable offense like theft, you have legal remedies. Under the Code of Criminal Procedure (CrPC) and the new Bharatiya Nagarik Suraksha Sanhita (BNSS), you can take the following steps:\n\n1. **Approach Higher Authorities**: Send the substance of your information/complaint in writing and by post to the Superintendent of Police (SP) or Deputy Commissioner of Police (DCP).\n2. **Magistrate Complaint**: If the SP/DCP does not act, you can approach the local Judicial Magistrate under Section 156(3) of CrPC (or equivalent BNSS section) to pass an order directing the police to register the FIR and investigate.\n3. **Online Portals**: Use state-specific online police grievance portals like CCTNS.\n4. **High Court**: As a last resort, file a writ petition in the High Court.\nAlways keep proof of your written complaints and postal receipts."),
+    (("lease", "license", "difference"), "The key difference between a Lease and a License in Indian law (Transfer of Property Act vs Indian Easements Act) lies in the transfer of interest:\n\n1. **Interest in Property**: A Lease transfers an interest in the property (right to enjoy), whereas a License is a mere permission to use the property without transferring any interest.\n2. **Transferability**: A Lease is generally transferable and heritable. A License is personal and neither transferable nor heritable.\n3. **Possession**: Lease involves transfer of possession. License usually involves only a right to use, with possession remaining with the owner.\n4. **Revocability**: A Lease cannot be revoked at the will of the landlord (except for breach of terms). A License is generally revocable at the will of the grantor.\n5. **Legal Action**: A lessee can sue a third party for trespass; a licensee generally cannot.")
 ]
 
 # Local Fallback Templates for Drafting
@@ -289,7 +292,9 @@ def get_ai_response(user_message, history, files=None, language="English"):
             )
             return response.content[0].text
         except Exception as e:
+            import traceback
             print(f"Anthropic Error (skipping to fallback): {e}")
+            traceback.print_exc()
 
     # Fallback to Gemini Pro (Intelligence)
     if model_pro:
@@ -304,7 +309,9 @@ def get_ai_response(user_message, history, files=None, language="English"):
             response = chat.send_message(prompt)
             return response.text
         except Exception as e:
+            import traceback
             print(f"Gemini Pro Error (skipping to fallback): {e}")
+            traceback.print_exc()
 
     # Fallback to Gemini Flash (Speed/Secondary Quota)
     if model_flash:
